@@ -1,0 +1,181 @@
+объединение двух таблиц в одном запросе
+SELECT * FROM `category`,`products`
+
+выводит названия товара с названием категории этого товара
+SELECT * FROM `category`,`products` WHERE `category`.`id`=`products`.`category_id`
+показать 2 таблицы в одной с русским заглавием
+SELECT
+    products.name AS 'название книги',
+    products.ldescription AS 'описание',
+    products.price AS 'цена',
+    products.count AS 'тираж',
+    category.name AS 'категория'
+FROM
+    `products`,
+    `category`
+WHERE
+     category_id=category.id
+
+
+-- выводит на экран таблицу ведомость--
+SELECT * 
+FROM "vedomost"    
+
+-- выводит все поля с зп > 1000--
+SELECT * 
+FROM "vedomost" 
+WHERE "zp" > 1000  
+
+-- выводит поля с зп меньше 1000 из продаж --
+SELECT * 
+FROM "vedomost" 
+WHERE "zp" < 1000 AND "otdel" = "продажи"
+
+--выводит поля с зп меньше 1000 и НЕ из продаж--
+SELECT *
+FROM "vedomost" 
+WHERE "zp" < 1000 AND NOT "otdel" = "продажи"
+
+--выводит заданные поля под новыми названиями--
+SELECT "id" AS "Номер", "fio" AS "ФИО" 
+FROM "vedomost"    
+
+--выводит все поля и зп в $--
+SELECT "id", "otdel", "fio", "zp"/2.15 AS "$" 
+FROM "vedomost" 
+
+--найти продавцов из городов: Лондон и Сан Хосе--
+SELECT * 
+FROM "salespeople" 
+WHERE "city" = "London" OR "city" = "San Jose"
+
+--другой вариант--
+SELECT * 
+FROM `salespeople` 
+WHERE `city` IN ("London", "San Jose")
+
+--найти всех продавцов с комиссионными от 0,11 до 0,13%--
+SELECT * 
+FROM `salespeople` 
+WHERE `comm` => 0.11 AND `comm` <= 0.13
+
+--другой вариант--
+SELECT *
+FROM `salespeople` 
+WHERE `comm` BETWEEN 0.11 AND 0.13
+
+--выводит города повторяющиеся только один раз--
+SELECT DISTINCT `city` 
+FROM `customers`
+
+--выводит города и рейтинг повторяющиеся только один раз--
+SELECT DISTINCT `city`, `rating` 
+FROM `customers`
+
+--полнотекстный поиск--
+-- % - заменяет любой символ, включая ни одного символа--
+-- _ - любой символ--
+
+--найти города начинающиеся с L--
+SELECT DISTINCT `city` 
+FROM `customers` 
+WHERE `city` LIKE "L%"
+
+--вывести города с буквой n--
+SELECT DISTINCT `city` 
+FROM `customers` 
+WHERE `city` LIKE "%n%"
+
+--вывести продавцов со второй буквой e--
+SELECT `cname` 
+FROM `customers` 
+WHERE `cname` LIKE "-e%"
+
+--функции агригирования (групповые хар-ки столбцов)--
+
+--минимальный заказ--
+SELECT MIN(`amt`) 
+FROM `orders` 
+
+--средний заказ--
+SELECT AVG(`amt`) 
+FROM `orders` 
+
+--максимальный заказ--
+SELECT MAX(`amt`) 
+FROM `orders` 
+
+--количество заказов--
+SELECT COUNT(`amt`) 
+FROM `orders` 
+
+--количество строк в таблице--
+SELECT COUNT(*) 
+FROM `orders` 
+
+--сумма заказов--
+SELECT SUM(`amt`) 
+FROM `orders` 
+
+--отсортировать таблицу по полю amt--
+SELECT * 
+FROM `orders` 
+ORDER BY `orders`.`amt` ASC --от меньшего к большему--
+
+SELECT * 
+FROM `orders` 
+ORDER BY `orders`.`amt` DESC --от большего к меньшему--
+
+--отсортировать по второму полю--
+SELECT * 
+FROM `salespeople` 
+ORDER BY 2 
+
+--бухгалтерии зп по 500--
+UPDATE vedomost
+SET zp = 500
+WHERE otdel = "бухгалтерия";
+
+--руководству поднять зп на 20%--
+UPDATE vedomost
+SET zp = zp*1.2
+WHERE otdel = "руководство";
+
+--перевести всех Буниных в бухгалтерию с зп 1000--
+UPDATE vedomost
+SET otdel = "бухгалтерия", zp = 1000
+WHERE fio like "Бунин%";
+
+--всех сотрудников бухгалтерии в продажи и зп - 20%--
+UPDATE vedomost
+SET otdel = "продажи", zp = zp*0.8
+WHERE otdel = "бухгалтерия";
+
+--добавить Иванова--
+INSERT INTO vedomost(fio)
+VALUES("Иванов");
+
+--установить Иванову зп и отдел--
+UPDATE vedomost
+SET otdel = "продажи", zp = 800
+WHERE fio LIKE "Иванов%" AND otdel IS null;
+
+--добавить Иванову имя и отчество--
+UPDATE vedomost
+SET fio = "Иванов Иван Иванович"
+WHERE fio LIKE "Иванов";
+
+--удалить ведомость--
+DELETE
+FROM vedomost;
+
+--удалить всех Ивановых--
+DELETE
+FROM vedomost
+WHERE fio like "Иванов%";
+
+--удалить таблицу--
+DROP TABLE vedomost;
+
+--создать таблицу--
+CREATE TABLE vedomost(id INT, fio VARCHAR(50), zp REAL);
